@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import namake.recipebook.data.model.Recipe
 
@@ -26,4 +27,10 @@ interface RecipeDao {
 
     @Delete
     suspend fun deleteRecipe(recipe: Recipe)
+
+    @Update
+    suspend fun updateRecipe(recipe: Recipe)
+
+    @Query("SELECT * FROM recipes WHERE id = :id")
+    fun getRecipeById(id: Long): Flow<Recipe?>
 }

@@ -1,5 +1,6 @@
 package namake.recipebook.ui.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -32,7 +33,8 @@ import namake.recipebook.data.model.Recipe
 fun RecipeListScreen(
     recipes: List<Recipe>,
     onAddClick: () -> Unit,
-    onDeleteClick: (Recipe) -> Unit
+    onRecipeClick: (Recipe) -> Unit,
+    onDeleteClick: (Recipe) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -61,6 +63,7 @@ fun RecipeListScreen(
                 items(recipes) { recipe ->
                     RecipeListItem(
                         recipe = recipe,
+                        onClick = { onRecipeClick(recipe) },
                         onDeleteClick = { onDeleteClick(recipe) }
                     )
                 }
@@ -72,11 +75,13 @@ fun RecipeListScreen(
 @Composable
 fun RecipeListItem(
     recipe: Recipe,
+    onClick: () -> Unit = {},
     onDeleteClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable (onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

@@ -21,4 +21,11 @@ class RecipeRepository(private val recipeDao: RecipeDao) {
         recipeDao.deleteRecipe(recipe)
     }
 
+    suspend fun updateRecipe(recipe: Recipe) {
+        recipeDao.updateRecipe(recipe)
+    }
+
+    fun getRecipeById(id: Long): Flow<Recipe?> {
+        return recipeDao.getRecipeById(id)
+    }
 }

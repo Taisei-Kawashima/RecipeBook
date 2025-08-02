@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -35,5 +36,16 @@ class MainViewModel(private val repository: RecipeRepository) : ViewModel() {
         viewModelScope.launch {
             repository.deleteRecipe(recipe)
         }
+    }
+
+    // レシピを更新するための関数
+    fun update(recipe: Recipe) {
+        viewModelScope.launch {
+            repository.updateRecipe(recipe)
+        }
+    }
+
+    fun getRecipeById(id: Long): Flow<Recipe?> {
+        return repository.getRecipeById(id)
     }
 }
