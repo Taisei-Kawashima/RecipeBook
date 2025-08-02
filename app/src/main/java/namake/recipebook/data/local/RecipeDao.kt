@@ -1,6 +1,7 @@
 package namake.recipebook.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
@@ -22,4 +23,7 @@ interface RecipeDao {
     // suspend関数なので、非同期で実行される
     // Recipe型のデータを一つ受け取り、それをデータベースに挿入するための関数
     suspend fun insertRecipe(recipe: Recipe)
+
+    @Delete
+    suspend fun deleteRecipe(recipe: Recipe)
 }

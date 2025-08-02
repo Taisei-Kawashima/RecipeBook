@@ -6,8 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import namake.recipebook.data.local.AppDatabase
+import namake.recipebook.data.model.Recipe
 import namake.recipebook.data.repository.RecipeRepository
 import namake.recipebook.ui.main.MainViewModel
 import namake.recipebook.ui.main.MainViewModelFactory
@@ -32,11 +36,35 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RecipeBookTheme {
-                // ViewModelからレシピリストの状態(State)を取得
-                val recipes by viewModel.allRecipes.collectAsState()
+                val navController = rememberNavController()
 
-                // UIの本体を呼び出す
-                RecipeListScreen(recipes = recipes)
+                NavHost(navController = navController, startDestination = "recipe_list") {
+                    // 一覧画面
+                    composable("recipe_list") {
+                        val recipes by viewModel.allRecipes.collectAsState()
+                        RecipeListScreen(
+                            recipes = recipes,
+                            onAddClick = {
+                                navController.navigate("edit_recipe")
+                            },
+                            onDeleteClick = {
+                                recipe -> viewModel.delete(recipe)
+                            }
+                        )
+                    }
+
+                    // 登録画面
+                    composable("edit_recipe") {
+                        EditRecipeScreen(
+                            onSaveClick = { name ->
+                                // 保存ボタンが押されたらレシピをDBに追加
+                                viewModel.insert(Recipe(name = name, imagePath = null))
+                                // 一覧画面に戻る
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                }
             }
         }
     }

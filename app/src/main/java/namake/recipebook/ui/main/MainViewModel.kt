@@ -29,4 +29,11 @@ class MainViewModel(private val repository: RecipeRepository) : ViewModel() {
             repository.insertRecipe(recipe)
         }
     }
+
+    // レシピを削除するための関数
+    fun delete(recipe: Recipe) {
+        viewModelScope.launch {
+            repository.deleteRecipe(recipe)
+        }
+    }
 }
