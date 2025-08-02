@@ -7,7 +7,7 @@ import namake.recipebook.data.model.Recipe
 // AppDatabaseはRoomデータベースの定義を行うクラス
 // entitiesはこのデータベースが管理するエンティティをリスト形式で指定
 // versionはデータベースのバージョン
-@Database(entities = [Recipe::class], version = 1)
+@Database(entities = [Recipe::class], version = 1, exportSchema = false)
 // abstractクラスであるため、抽象クラス
 abstract class AppDatabase : RoomDatabase() {
 
