@@ -21,9 +21,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EditRecipeScreen(
     initialName: String,
-    onSaveClick: (name: String) -> Unit
+    initialIngredients: String,
+    initialInstructions: String,
+    onSaveClick: (name: String, ingredients: String, instructions: String) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
+    var ingredients by remember { mutableStateOf(initialIngredients) }
+    var instructions by remember { mutableStateOf(initialInstructions) }
 
     LaunchedEffect(initialName) {
         name = initialName
@@ -41,8 +45,22 @@ fun EditRecipeScreen(
                 onValueChange = { name = it },
                 modifier = Modifier.fillMaxWidth()
             )
+            Text("材料", modifier = Modifier.padding(top = 8.dp)) // ★追加
+            OutlinedTextField(
+                value = ingredients,
+                onValueChange = { ingredients = it },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Text("作り方", modifier = Modifier.padding(top = 8.dp)) // ★追加
+            OutlinedTextField(
+                value = instructions,
+                onValueChange = { instructions = it },
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Button(
-                onClick = { onSaveClick(name) },
+                onClick = { onSaveClick(name, ingredients, instructions) },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
                 Text("保存")

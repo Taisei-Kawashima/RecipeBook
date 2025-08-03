@@ -75,13 +75,13 @@ fun RecipeListScreen(
 @Composable
 fun RecipeListItem(
     recipe: Recipe,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable (onClick = onClick)
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

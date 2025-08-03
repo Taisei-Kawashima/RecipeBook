@@ -13,6 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import namake.recipebook.data.local.AppDatabase
 import namake.recipebook.data.model.Recipe
 import namake.recipebook.data.repository.RecipeRepository
@@ -21,11 +23,22 @@ import namake.recipebook.ui.theme.RecipeBookTheme
 class MainActivity : ComponentActivity() {
 
     private val database by lazy {
+
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // バージョン1から2へのマイグレーション処理をここに記述
+                database.execSQL("ALTER TABLE recipes ADD COLUMN ingredients TEXT")
+                database.execSQL("ALTER TABLE recipes ADD COLUMN instructions TEXT")
+            }
+        }
+
+
         Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "recipe_database"
-        ).build()
+        )   .addMigrations(MIGRATION_1_2)
+            .build()
     }
     private val repository by lazy { RecipeRepository(database.recipeDao()) }
     private val factory by lazy { MainViewModelFactory(repository) }
@@ -50,9 +63,28 @@ class MainActivity : ComponentActivity() {
                             },
                             onRecipeClick = { recipe ->
                                 // レシピをタップしたら、そのIDを渡して画面遷移
-                                navController.navigate("edit_recipe/${recipe.id}")
+                                navController.navigate("recipe_detail/${recipe.id}")
                             },
                             onDeleteClick = { recipe -> viewModel.delete(recipe) }
+                        )
+                    }
+                    // 詳細画面
+                    composable(
+                        route = "recipe_detail/{recipeId}",
+                        arguments = listOf(navArgument("recipeId") { type = NavType.LongType })
+                    ) { backStackEntry ->
+                        val recipeId = backStackEntry.arguments?.getLong("recipeId") ?: 0
+                        val recipeState by produceState<Recipe?>(initialValue = null, recipeId) {
+                            if (recipeId != 0L) {
+                                viewModel.getRecipeById(recipeId).collect { value = it }
+                            }
+                        }
+                        RecipeDetailScreen(
+                            recipe = recipeState,
+                            onEditClick = {
+                                // 編集ボタンが押されたら編集画面へ
+                                navController.navigate("edit_recipe/$recipeId")
+                            }
                         )
                     }
 
@@ -71,13 +103,30 @@ class MainActivity : ComponentActivity() {
 
                         EditRecipeScreen(
                             initialName = recipeState?.name ?: "",
-                            onSaveClick = { name ->
+                            initialIngredients = recipeState?.ingredients ?: "",
+                            initialInstructions = recipeState?.instructions ?: "",
+                            onSaveClick = { name, ingredients, instructions -> // ★引数を変更
                                 if (recipeId == 0L) {
                                     // 新規保存
-                                    viewModel.insert(Recipe(name = name, imagePath = null))
+                                    viewModel.insert(
+                                        Recipe(
+                                            name = name,
+                                            imagePath = null,
+                                            ingredients = ingredients,
+                                            instructions = instructions
+                                        )
+                                    )
                                 } else {
                                     // 更新
-                                    viewModel.update(Recipe(id = recipeId, name = name, imagePath = recipeState?.imagePath))
+                                    viewModel.update(
+                                        Recipe(
+                                            id = recipeId,
+                                            name = name,
+                                            imagePath = recipeState?.imagePath,
+                                            ingredients = ingredients,
+                                            instructions = instructions
+                                        )
+                                    )
                                 }
                                 navController.popBackStack()
                             }
