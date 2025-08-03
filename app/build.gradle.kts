@@ -15,7 +15,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -45,7 +44,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.appcompat) // AppCompatはComposeでも必要になる場面がある
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity.ktx) // For Photo Picker
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -60,7 +60,10 @@ dependencies {
     kapt(libs.androidx.room.compiler)
 
     // Navigation
-    implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.navigation.compose)
+
+    // Image Loading
+    implementation(libs.coil.compose)
 
     // Test
     testImplementation(libs.junit)

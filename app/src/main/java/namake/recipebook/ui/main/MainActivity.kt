@@ -105,30 +105,27 @@ class MainActivity : ComponentActivity() {
                             initialName = recipeState?.name ?: "",
                             initialIngredients = recipeState?.ingredients ?: "",
                             initialInstructions = recipeState?.instructions ?: "",
-                            onSaveClick = { name, ingredients, instructions -> // ★引数を変更
+                            initialImagePath = recipeState?.imagePath, // ★ 不足していた引数を追加
+                            onSaveClick = { name, ingredients, instructions, imagePath -> // ★ imagePath を追加
                                 if (recipeId == 0L) {
-                                    // 新規保存
-                                    viewModel.insert(
-                                        Recipe(
-                                            name = name,
-                                            imagePath = null,
-                                            ingredients = ingredients,
-                                            instructions = instructions
-                                        )
-                                    )
+                                    viewModel.insert(Recipe(
+                                        name = name,
+                                        ingredients = ingredients,
+                                        instructions = instructions,
+                                        imagePath = imagePath // ★ imagePath を使用
+                                    ))
                                 } else {
-                                    // 更新
-                                    viewModel.update(
-                                        Recipe(
-                                            id = recipeId,
-                                            name = name,
-                                            imagePath = recipeState?.imagePath,
-                                            ingredients = ingredients,
-                                            instructions = instructions
-                                        )
-                                    )
+                                    viewModel.update(Recipe(
+                                        id = recipeId,
+                                        name = name,
+                                        ingredients = ingredients,
+                                        instructions = instructions,
+                                        imagePath = imagePath // ★ imagePath を使用
+                                    ))
                                 }
-                                navController.popBackStack()
+                                navController.navigate("recipe_list") {
+                                    popUpTo("recipe_list") { inclusive = true }
+                                }
                             }
                         )
                     }
