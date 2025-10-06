@@ -12,35 +12,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import namake.recipebook.data.local.AppDatabase
 import namake.recipebook.data.model.Recipe
 import namake.recipebook.data.repository.RecipeRepository
+import namake.recipebook.di.AppModule
 import namake.recipebook.ui.theme.RecipeBookTheme
 
 class MainActivity : ComponentActivity() {
-
-    private val database by lazy {
-
-        val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                // バージョン1から2へのマイグレーション処理をここに記述
-                database.execSQL("ALTER TABLE recipes ADD COLUMN ingredients TEXT")
-                database.execSQL("ALTER TABLE recipes ADD COLUMN instructions TEXT")
-            }
-        }
-
-
-        Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "recipe_database"
-        )   .addMigrations(MIGRATION_1_2)
-            .build()
-    }
-    private val repository by lazy { RecipeRepository(database.recipeDao()) }
+    private val repository: RecipeRepository = AppModule.recipeRepository
     private val factory by lazy { MainViewModelFactory(repository) }
 
     private val viewModel: MainViewModel by viewModels { factory }
@@ -80,11 +58,10 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         RecipeDetailScreen(
-                            recipe = recipeState,
-                            onEditClick = {
-                                // 編集ボタンが押されたら編集画面へ
-                                navController.navigate("edit_recipe/$recipeId")
-                            }
+                            recipeId = recipeId, // ★ IDを渡すように修正 (前のステップでの修正漏れに対応)
+                            viewModel = viewModel, // ★ ViewModelを渡すように修正
+                            onBack = { navController.popBackStack() }, // ★ 戻る処理を追加
+                            onEdit = { id -> navController.navigate("edit_recipe/$id") } // ★ 編集処理を追加
                         )
                     }
 
@@ -92,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = "edit_recipe/{recipeId}",
                         arguments = listOf(navArgument("recipeId") { type = NavType.LongType })
-                    ) { backStackEntry ->
+                    ) { backStackEntry -> // ★ baclStackEntry のタイポを修正
                         val recipeId = backStackEntry.arguments?.getLong("recipeId") ?: 0
 
                         val recipeState by produceState<Recipe?>(initialValue = null, recipeId) {
@@ -103,16 +80,21 @@ class MainActivity : ComponentActivity() {
 
                         EditRecipeScreen(
                             initialName = recipeState?.name ?: "",
-                            initialIngredients = recipeState?.ingredients ?: "",
                             initialInstructions = recipeState?.instructions ?: "",
-                            initialImagePath = recipeState?.imagePath, // ★ 不足していた引数を追加
-                            onSaveClick = { name, ingredients, instructions, imagePath -> // ★ imagePath を追加
-                                if (recipeId == 0L) {
+                            initialImagePath = recipeState?.imagePath,
+                            initialPreparationSteps = recipeState?.preparationSteps,
+                            initialCalories = recipeState?.calories,
+                            initialIngredients = recipeState?.ingredients,
+
+                            onSaveClick = { name, ingredients, instructions, imagePath, preparationSteps, calories ->
+                                if(recipeId == 0L) {
                                     viewModel.insert(Recipe(
                                         name = name,
                                         ingredients = ingredients,
                                         instructions = instructions,
-                                        imagePath = imagePath // ★ imagePath を使用
+                                        imagePath = imagePath,
+                                        preparationSteps = preparationSteps,
+                                        calories = calories
                                     ))
                                 } else {
                                     viewModel.update(Recipe(
@@ -120,7 +102,9 @@ class MainActivity : ComponentActivity() {
                                         name = name,
                                         ingredients = ingredients,
                                         instructions = instructions,
-                                        imagePath = imagePath // ★ imagePath を使用
+                                        imagePath = imagePath,
+                                        preparationSteps = preparationSteps,
+                                        calories = calories
                                     ))
                                 }
                                 navController.navigate("recipe_list") {

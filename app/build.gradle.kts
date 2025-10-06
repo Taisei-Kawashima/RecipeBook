@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "namake.recipebook"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "namake.recipebook"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -54,16 +54,16 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
-
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
     // Image Loading
     implementation(libs.coil.compose)
+
+    // ★ Supabase と Serialization を追加
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.postgrest)
+    implementation(libs.kotlinx.serialization.json)
 
     // Test
     testImplementation(libs.junit)
