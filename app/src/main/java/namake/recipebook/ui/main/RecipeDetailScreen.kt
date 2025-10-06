@@ -83,7 +83,7 @@ fun RecipeDetailScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(250.dp),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Fit
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -160,7 +160,7 @@ fun RecipeDetailScreen(
                                     .fillMaxWidth()
                                     .height(150.dp)
                                     .padding(vertical = 8.dp),
-                                contentScale = ContentScale.Crop,
+                                contentScale = ContentScale.Fit,
                                 alignment = Alignment.Center
                             )
                         }

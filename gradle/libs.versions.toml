@@ -14,6 +14,7 @@ activityKtx = "1.9.0"
 coil = "2.6.0"
 supabase = "3.2.3" # Supabase Kotlin Client のバージョン
 kotlinxSerialization = "1.6.3" # KotlinX Serialization のバージョン
+ktor = "3.3.0"
 
 [libraries]
 # Core & Lifecycle
@@ -43,6 +44,9 @@ supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgre
 
 # Serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }

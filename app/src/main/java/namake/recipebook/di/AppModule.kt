@@ -7,7 +7,7 @@ import namake.recipebook.data.repository.RecipeRepository
 
 object AppModule{
     private const val SUPABASE_URL = "https://mgnvdinktcxwnxqqfifq.supabase.co"
-    private const val SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nbnZkaW5rdGN4d254cXFmaWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MDgzNzIsImV4cCI6MjA3NTI4NDM3Mn0.aVjVBcD-W3k8AtxaUhie5sbEcuHIjA-LcfM5eNKXW48"
+    private const val SUPABASE_ANON_KEY = "sb_secret_Zu0-tD8UMHxumhWSxy2gyg_0roPe46F"
 
     private val supabase: SupabaseClient = createSupabaseClient (
         supabaseUrl = SUPABASE_URL,

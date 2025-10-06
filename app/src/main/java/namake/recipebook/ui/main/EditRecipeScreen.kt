@@ -39,7 +39,7 @@ fun EditRecipeScreen(
 
     onSaveClick: (
         name: String,
-        ingredients: List<Ingredient>, // List<Ingredient> に変更
+        ingredients: List<Ingredient>,
         instructions: String,
         imagePath: String?,
         preparationSteps: List<String>?, // 追加
@@ -54,8 +54,9 @@ fun EditRecipeScreen(
     var calories by remember { mutableStateOf<String>("") } // Int? のため、編集しやすいようStringで管理
     var preparationSteps by remember { mutableStateOf<String>("") } // 簡易化のため、一旦単一のパスとして扱う
 
-    // ★ List<Ingredient> のための簡易入力状態
-    var tempIngredientName by remember { mutableStateOf("") }
+    var ingredients by remember { mutableStateOf(initialIngredients ?: emptyList()) }
+    var tempIngredientName by remember { mutableStateOf("") } // 簡易化
+
 
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -79,8 +80,8 @@ fun EditRecipeScreen(
         // preparationSteps は List<String> ですが、ここでは最初の要素を設定
         preparationSteps = initialPreparationSteps?.firstOrNull() ?: ""
 
-        // ★ 既存の材料データから、最初の材料名だけを抽出して一時変数に設定
-        tempIngredientName = initialIngredients?.firstOrNull()?.name ?: ""
+        ingredients = initialIngredients ?: emptyList()
+
     }
 
     Scaffold { paddingValues ->
@@ -98,13 +99,14 @@ fun EditRecipeScreen(
             )
 
             // ★ 新しい材料入力（簡易版: 名前のテキストフィールドのみ）
-            Text("材料名 (簡易入力)", modifier = Modifier.padding(top = 8.dp))
-            OutlinedTextField(
-                value = tempIngredientName,
-                onValueChange = { tempIngredientName = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("例: 鶏もも肉、玉ねぎなど（詳細入力は後で実装）") }
+            Spacer(Modifier.height(16.dp))
+            IngredientEditList(
+                ingredients = ingredients,
+                onIngredientsChange = {
+                    ingredients = it // 更新されたリストを状態に反映
+                }
             )
+            Spacer(Modifier.height(8.dp))
 
             Text("作り方", modifier = Modifier.padding(top = 8.dp))
             OutlinedTextField(
@@ -122,23 +124,7 @@ fun EditRecipeScreen(
                 placeholder = { Text("例: 450") }
             )
 
-            // ★ 調理過程の写真入力フィールドの追加
-            Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
-                prepImagePickerLauncher.launch("image/*") // 調理過程の写真を選択
-            }) {
-                Text("調理過程の写真を選択 (簡易)")
-            }
-
-            preparationSteps.takeIf { it.isNotEmpty() }?.let {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("調理過程の画像パス: $it")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(onClick = {
-                // メイン画像を選択
                 imagePickerLauncher.launch("image/*")
             }) {
                 Text("メイン画像を選択")
@@ -150,7 +136,25 @@ fun EditRecipeScreen(
                     painter = rememberAsyncImagePainter(it),
                     contentDescription = "選択されたメイン画像",
                     modifier = Modifier.fillMaxWidth().height(200.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+            // ★ 調理過程の写真入力フィールドの追加
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                prepImagePickerLauncher.launch("image/*") // 調理過程の写真を選択
+            }) {
+                Text("調理過程の写真を選択")
+            }
+
+            preparationSteps.let {
+                Spacer(modifier = Modifier.height(16.dp))
+                Image(
+                    painter = rememberAsyncImagePainter(it),
+                    contentDescription = "選択されたメイン画像",
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -184,7 +188,7 @@ fun EditRecipeScreen(
 
                     onSaveClick(
                         name,
-                        newIngredientsList,
+                        ingredients.filter { it.name.isNotBlank() },
                         instructions,
                         imagePath,
                         parsedPreparationSteps,
