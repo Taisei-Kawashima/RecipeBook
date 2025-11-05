@@ -1,5 +1,7 @@
 package namake.recipebook.di
 
+import namake.recipebook.BuildConfig
+import com.google.ai.client.generativeai.GenerativeModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -7,11 +9,10 @@ import namake.recipebook.data.repository.RecipeRepository
 
 object AppModule{
     private const val SUPABASE_URL = "https://mgnvdinktcxwnxqqfifq.supabase.co"
-    private const val SUPABASE_ANON_KEY = "sb_secret_Zu0-tD8UMHxumhWSxy2gyg_0roPe46F"
 
     private val supabase: SupabaseClient = createSupabaseClient (
         supabaseUrl = SUPABASE_URL,
-        supabaseKey = SUPABASE_ANON_KEY
+        supabaseKey = BuildConfig.SUPABASE_ANON_KEY
     ){
         install(Postgrest)
     }
@@ -19,4 +20,13 @@ object AppModule{
     val recipeRepository: RecipeRepository by lazy {
         RecipeRepository(supabase)
     }
+
+    private val generativeModel: GenerativeModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-pro",
+            apiKey = BuildConfig.GEMINI_API_KEY
+        )
+    }
+
+
 }

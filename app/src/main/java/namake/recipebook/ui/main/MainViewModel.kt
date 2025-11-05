@@ -2,6 +2,8 @@ package namake.recipebook.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.OptIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow // ★ 変更なし
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,6 +14,7 @@ import kotlinx.coroutines.launch
 import namake.recipebook.data.model.Recipe
 import namake.recipebook.data.repository.RecipeRepository
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModel(private val repository: RecipeRepository) : ViewModel() {
 
     // ★ 修正: リフレッシュをトリガーするための StateFlow を Int カウンターで定義

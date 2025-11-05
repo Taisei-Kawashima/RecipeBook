@@ -12,9 +12,11 @@ appcompat = "1.7.1"
 navigationCompose = "2.7.7"
 activityKtx = "1.9.0"
 coil = "2.6.0"
+secretsGradlePlugin = "2.0.1"
 supabase = "3.2.3" # Supabase Kotlin Client のバージョン
 kotlinxSerialization = "1.6.3" # KotlinX Serialization のバージョン
 ktor = "3.3.0"
+generativeai = "0.9.0"
 
 [libraries]
 # Core & Lifecycle
@@ -39,6 +41,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 # SupaBase
+secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
 supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
 
@@ -47,6 +50,8 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+
+google-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }

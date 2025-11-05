@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -33,6 +34,26 @@ class MainActivity : ComponentActivity() {
                     // 一覧画面
                     composable("recipe_list") {
                         val recipes by viewModel.allRecipes.collectAsState()
+                        LaunchedEffect(recipes) {
+                            if (recipes.isEmpty()) {
+                                // ユーザーが追加した "curry.png" ファイルのリソース名を使用
+                                val demoRecipe = Recipe(
+                                    name = "デモ・チキンカレー",
+                                    imagePath = "curry", // ★ リソース名 "curry" を使用
+                                    instructions = "玉ねぎを炒め、鶏肉とカレー粉、水を加えて煮込む。",
+                                    preparationSteps = listOf("curry"), // ★ 調理過程も同じ画像で代用
+                                    calories = 750,
+                                    ingredients = listOf(
+                                        namake.recipebook.data.model.Ingredient(
+                                            name = "鶏もも肉", price = 400, priceComparison = 90,
+                                            imagePath = null, description = null, allergens = listOf("鶏肉")
+                                        )
+                                    )
+                                )
+                                // 挿入を試みます (Supabaseが空である場合にのみ実行されます)
+                                viewModel.insert(demoRecipe)
+                            }
+                        }
                         RecipeListScreen(
                             recipes = recipes,
                             onAddClick = {
@@ -58,10 +79,10 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         RecipeDetailScreen(
-                            recipeId = recipeId, // ★ IDを渡すように修正 (前のステップでの修正漏れに対応)
-                            viewModel = viewModel, // ★ ViewModelを渡すように修正
-                            onBack = { navController.popBackStack() }, // ★ 戻る処理を追加
-                            onEdit = { id -> navController.navigate("edit_recipe/$id") } // ★ 編集処理を追加
+                            recipeId = recipeId,
+                            viewModel = viewModel,
+                            onBack = { navController.popBackStack() },
+                            onEdit = { id -> navController.navigate("edit_recipe/$id") }
                         )
                     }
 
@@ -69,7 +90,7 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = "edit_recipe/{recipeId}",
                         arguments = listOf(navArgument("recipeId") { type = NavType.LongType })
-                    ) { backStackEntry -> // ★ baclStackEntry のタイポを修正
+                    ) { backStackEntry ->
                         val recipeId = backStackEntry.arguments?.getLong("recipeId") ?: 0
 
                         val recipeState by produceState<Recipe?>(initialValue = null, recipeId) {

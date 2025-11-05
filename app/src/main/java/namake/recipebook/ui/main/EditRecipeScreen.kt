@@ -42,20 +42,19 @@ fun EditRecipeScreen(
         ingredients: List<Ingredient>,
         instructions: String,
         imagePath: String?,
-        preparationSteps: List<String>?, // 追加
-        calories: Int? // 追加
+        preparationSteps: List<String>?,
+        calories: Int?
     ) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var instructions by remember { mutableStateOf("") }
     var imagePath by remember { mutableStateOf<String?>(null) }
 
-    // ★ 新しいフィールドの状態
-    var calories by remember { mutableStateOf<String>("") } // Int? のため、編集しやすいようStringで管理
-    var preparationSteps by remember { mutableStateOf<String>("") } // 簡易化のため、一旦単一のパスとして扱う
+    var calories by remember { mutableStateOf<String>("") }
+    var preparationSteps by remember { mutableStateOf<String>("") }
 
     var ingredients by remember { mutableStateOf(initialIngredients ?: emptyList()) }
-    var tempIngredientName by remember { mutableStateOf("") } // 簡易化
+    var tempIngredientName by remember { mutableStateOf("") }
 
 
 
@@ -64,7 +63,7 @@ fun EditRecipeScreen(
         onResult = { uri -> uri?.let { imagePath = it.toString() } }
     )
 
-    // 調理過程の写真選択ランチャー (簡易)
+    // 調理過程の写真選択ランチャー
     val prepImagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri -> uri?.let { preparationSteps = it.toString() } }
@@ -75,9 +74,7 @@ fun EditRecipeScreen(
         instructions = initialInstructions
         imagePath = initialImagePath
 
-        // ★ 新しいフィールドの初期化
         calories = initialCalories?.toString() ?: ""
-        // preparationSteps は List<String> ですが、ここでは最初の要素を設定
         preparationSteps = initialPreparationSteps?.firstOrNull() ?: ""
 
         ingredients = initialIngredients ?: emptyList()
@@ -98,7 +95,7 @@ fun EditRecipeScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ★ 新しい材料入力（簡易版: 名前のテキストフィールドのみ）
+            // 新しい材料入力（簡易版: 名前のテキストフィールドのみ）
             Spacer(Modifier.height(16.dp))
             IngredientEditList(
                 ingredients = ingredients,
@@ -115,7 +112,7 @@ fun EditRecipeScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ★ カロリー入力フィールドの追加
+            // カロリー入力フィールドの追加
             Text("カロリー (kcal)", modifier = Modifier.padding(top = 8.dp))
             OutlinedTextField(
                 value = calories,
@@ -140,7 +137,7 @@ fun EditRecipeScreen(
                 )
             }
 
-            // ★ 調理過程の写真入力フィールドの追加
+            // 調理過程の写真入力フィールドの追加
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
                 prepImagePickerLauncher.launch("image/*") // 調理過程の写真を選択

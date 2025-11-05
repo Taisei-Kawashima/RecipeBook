@@ -111,7 +111,7 @@ fun IngredientItemEditor(
             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
         )
 
-         Divider(modifier = Modifier.padding(top = 16.dp))
+         HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
     }
 }
 
